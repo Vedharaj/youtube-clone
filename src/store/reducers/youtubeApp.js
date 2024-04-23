@@ -2,10 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import {YOUTUBE_API_URL} from '../../utils/constants'
 import axios from "axios"
 import process from "process"
-import { parseData } from '../../utils/index'
+import { parseData, parseRecommendedData } from '../../utils/index'
+import { parseVideoData } from "../../utils/parseVideoData.js"
 
-// const API_KEY = process.env.YOUTUBE_DATA_API_KEY2
-const API_KEY = "AIzaSyBOLUolpgyexsLm_ehOkYndagxpBHxmP4A"
+const API_KEY = import.meta.env.VITE_YOUTUBE_DATA_API_KEY1
+
 
 const initialState = {
     videos:[],
@@ -29,14 +30,13 @@ export const getHomePageVideo = createAsyncThunk(
           isNext ? `pageToken=${nextPageTokenFromState}` : ""
         }`
       );
-      console.log({ items, nextPageTokenFromState, nextPageToken });
       const parsedData = await parseData(items);
       return { parsedData: [...videos, ...parsedData], nextPageToken };
     }
   );
 
   export const getSearchPageVideo = createAsyncThunk(
-    "youtubeApp/serachPageVideos",
+    "youtubeApp/searchPageVideos",
     async (isNext, { getState }) => {
       const {
         youtubeApp: { nextPageToken: nextPageTokenFromState, videos, searchTerm },
@@ -50,6 +50,45 @@ export const getHomePageVideo = createAsyncThunk(
       );
       const parsedData = await parseData(items);
       return { parsedData: [...videos, ...parsedData], nextPageToken };
+    }
+  );
+
+  export const getVideoDetails = createAsyncThunk(
+    "yotubeApp/videoDetails",
+    async (id) => {
+      const {
+        data: { items },
+      } = await axios.get(
+        `${YOUTUBE_API_URL}/videos?key=${API_KEY}&part=snippet,statistics&type=video&id=${id}`
+      );
+  
+      return parseVideoData(items[0]);
+    }
+  );
+
+  export const getRecommendedVideos = createAsyncThunk(
+    "yotubeApp/getRecommendedVideos",
+    async (videoId, { getState }) => {
+      const {
+        youtubeApp: {
+          currentPlaying: {
+            channelInfo: { id: channelId },
+          },
+        },
+      } = getState();
+  
+      const {
+        data: { items },
+      } = await axios.get(
+        `${YOUTUBE_API_URL}/activities?key=${API_KEY}&channelId=${channelId}&part=snippet,contentDetails&maxResults=20&type=video&videoId=${videoId}`
+      );
+  
+      const parsedData = await parseRecommendedData(
+        items,
+        videoId
+      );
+  
+      return { parsedData };
     }
   );
 
@@ -77,6 +116,12 @@ const youtubeSlice = createSlice({
         builder.addCase(getSearchPageVideo.fulfilled, (state, action)=>{
             state.videos = action.payload.parsedData;
             state.nextPageToken = action.payload.nextPageToken;
+        })
+        builder.addCase(getVideoDetails.fulfilled, (state, action) => {
+          state.currentPlaying = action.payload;
+        });
+        builder.addCase(getRecommendedVideos.fulfilled, (state, action)=>{
+            state.recommendedVideos = action.payload.parsedData;
         })
     }
 })

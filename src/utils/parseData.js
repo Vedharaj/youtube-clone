@@ -6,8 +6,7 @@ import {
 } from "./index";
 import { YOUTUBE_API_URL } from "./constants";
 
-// const API_KEY = process.env.YOUTUBE_DATA_API_KEY
-const API_KEY = "AIzaSyBOLUolpgyexsLm_ehOkYndagxpBHxmP4A"
+const API_KEY = import.meta.env.VITE_YOUTUBE_DATA_API_KEY1
 
 export const parseData = async (items) => {
   try {
