@@ -65,14 +65,14 @@ To run the application locally, follow these steps:
 
 ### YouTube Data API v3
 The YouTube Data API v3 allows developers to access and interact with YouTube's features and data in this applications
-##### How to use this API:
-`1.Set Up a Project`: Create a new project in the Google Cloud Console.
-`2.Turn on YouTube Data API v3`: Enable this API for your project. It allows your app to interact with YouTube.
-`3.Get Credentials`: Create an API key to authenticate your app with the YouTube API.
-`4.Use the API Key`: Insert this key into your app's code. It lets your app make requests to the YouTube API to fetch data like video information.
-`5.Make Requests`: With the API key in place, your app can send requests to the YouTube API to get the data you need, like video details or search results.
+#### How to use this API:
+1. `Set Up a Project`: Create a new project in the Google Cloud Console.
+2. `Turn on YouTube Data API v3`: Enable this API for your project. It allows your app to interact with YouTube.
+3. `Get Credentials`: Create an API key to authenticate your app with the YouTube API.
+4. `Use the API Key`: Insert this key into your app's code. It lets your app make requests to the YouTube API to fetch data like video information.
+5. `Make Requests`: With the API key in place, your app can send requests to the YouTube API to get the data you need, like video details or search results.
 
-#### Configuration
+### Configuration
 - Create a `.env` file in the project directory with the following variables:
   ```
   VITE_YOUTUBE_DATA_API_KEY1=<your_youtube_api>
